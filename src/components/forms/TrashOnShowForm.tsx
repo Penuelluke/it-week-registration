@@ -34,9 +34,10 @@ export function TrashOnShowForm({ isSubmitting }: TrashOnShowProps) {
 
     try {
       const response = await fetch(
-        '/api/submit-registration',
+        'https://script.google.com/macros/s/AKfycbxSXaopMcdMcaBzjus8xe7GsNwGVC6iw0LicnIh1bWfCaOOzlb-JLx3RWSKhpDvPjN4/exec',
         {
           method: 'POST',
+          mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'

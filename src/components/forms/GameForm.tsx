@@ -77,9 +77,11 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
       console.log('Submitting Game registration payload:', payload);
 
       const response = await fetch(
-        '/api/submit-registration',
+        'https://script.google.com/macros/s/AKfycbxSXaopMcdMcaBzjus8xe7GsNwGVC6iw0LicnIh1bWfCaOOzlb-JLx3RWSKhpDvPjN4/exec',
         {
           method: 'POST',
+          mode: 'cors', // Explicitly set CORS mode
+          cache: 'no-cache',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
