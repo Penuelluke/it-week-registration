@@ -53,7 +53,7 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
     };
   
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxA8Pj06sswgmF0MJyl3Y6PNxYQZnjiOSswX-RFGlJKL5XYNWUd4jr6UbmTS3m4AK3b/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbz7qBr3fhUim7dP1VeiAY0O8QkIIxw3l2tEmhWhrLShrdOkRJWZ5VNiV30VAEWVV3gz/exec', {
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
