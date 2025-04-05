@@ -43,23 +43,35 @@ export function TalentForm({ isSubmitting }: TalentFormProps) {
     };
 
     try {
-      await fetch(
-        'https://script.google.com/macros/s/AKfycbw8avqqhW-9eIGCg6f2RRWW8byzfXjJqlbOLuEjZCJQFl3cQK9crA7KeNcW3y46mV_T/exec',
+      const response = await fetch(
+        '/api/submit-registration',
         {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
           body: JSON.stringify(payload)
         }
       );
+
+      // Check if the response is OK
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const result = await response.json();
       
-      toast.success('Talent registration submitted!');
-      (e.target as HTMLFormElement).reset();
+      if (result.result === 'success') {
+        toast.success(result.message || 'Talent registration submitted!');
+        (e.target as HTMLFormElement).reset();
+      } else {
+        throw new Error(result.message || 'Submission failed');
+      }
     } catch (error: any) {
       console.error('Talent submission error:', error);
-      toast.error('Failed to submit. Please try again.');
+      toast.error(error?.message || 'Failed to submit. Please try again.');
     }
   };
 

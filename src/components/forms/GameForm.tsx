@@ -37,43 +37,80 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
-  
-    const payload = {
-      fullName: formData.get('fullName') as string,
-      organization: formData.get('organization') as string,
-      contactNumber: formData.get('contactNumber') as string,
-      email: formData.get('email') as string,
-      facebook: formData.get('facebook') as string,
-      teamName: formData.get('teamName') as string,
-      message: formData.get('message') as string,
-      teamMembers,
-      substitutes
+    
+    // Validate contact number
+    const contactNumber = (e.target as HTMLFormElement).contactNumber.value;
+    if (!/^(09|\+639)\d{9}$/.test(contactNumber)) {
+      toast.error('Please enter a valid Philippine mobile number (e.g., 09123456789 or +639123456789)');
+      return;
+    }
+
+    // Validate team members
+    if (teamMembers.length < 1) {
+      toast.error('Please add at least one team member');
+      return;
+    }
+
+    // Prepare payload
+    const payload: GameSubmissionPayload = {
+      fullName: (e.target as HTMLFormElement).fullName.value,
+      email: (e.target as HTMLFormElement).email.value,
+      teamName: (e.target as HTMLFormElement).teamName.value,
+      contactNumber: contactNumber,
+      eventType: gameType,
+      organization: (e.target as HTMLFormElement).organization?.value || "",
+      facebook: (e.target as HTMLFormElement).facebook?.value || "",
+      teamMembers: teamMembers.map(member => ({
+        name: member.name,
+        inGameName: member.inGameName,
+        role: member.role || ""
+      })),
+      substitutes: substitutes.map(sub => ({
+        name: sub.name,
+        inGameName: sub.inGameName,
+        role: sub.role || ""
+      })),
+      message: (e.target as HTMLFormElement).message?.value || ""
     };
-  
+
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxUqERauAtHweG6bKdZNviM6yYUJh-5bEw8578O0QBwCwX4lc-HGMxEgduAi_SZafZn/exec', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json'
+      console.log('Submitting Game registration payload:', payload);
+
+      const response = await fetch(
+        '/api/submit-registration',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
         }
-      });
-  
-      const result = await response.json();
-  
-      if (result.success) {
-        toast.success('Registration submitted!');
-      } else {
-        toast.error('Something went wrong.');
+      );
+
+      // Check if the response is OK
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to submit the form.');
+
+      const result = await response.json();
+      
+      if (result.result === 'success') {
+        toast.success(result.message || 'Game registration submitted successfully!');
+        
+        // Reset form
+        (e.target as HTMLFormElement).reset();
+        setTeamMembers([{ name: '', inGameName: '' }]);
+        setSubstitutes([]);
+      } else {
+        throw new Error(result.message || 'Submission failed');
+      }
+    } catch (error: any) {
+      console.error('Game submission error:', error);
+      toast.error(error?.message || 'Failed to submit. Please try again.');
     }
   };
-  
 
   const addTeamMember = () => {
     if (teamMembers.length < teamSize) {

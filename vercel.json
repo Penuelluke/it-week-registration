@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/pages/api/submit-registration.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/submit-registration",
+      "dest": "src/pages/api/submit-registration.ts"
+    }
+  ]
+}
