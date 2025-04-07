@@ -32,36 +32,41 @@ export function EventCard({ event, isSelected, onClick, scrollToForm }: EventCar
 
   const renderGuidelines = () => {
     return event.guidelines.map((guideline, index) => {
-      if (!guideline.trim()) return null;
+      if (!guideline.trim()) return <br key={index} />;
       
       const isHeader = /^[^\w]*[\u{1F300}-\u{1F9FF}][^\w]*/u.test(guideline);
-      const isBulletPoint = guideline.startsWith('•');
-      const isSeparator = guideline.startsWith('===') || guideline.startsWith('---');
-
+      const isBulletPoint = guideline.startsWith('•') || guideline.startsWith('-');
+      const isSeparator = /^={3,}$|^-{3,}$/.test(guideline.trim());
+      const isImportant = guideline.includes('❗') || guideline.includes('⚠️');
+      const isQuestion = guideline.trim().endsWith('?');
+  
       return (
         <React.Fragment key={index}>
           {isSeparator ? (
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                <div className="w-full border-t border-gray-800/10 border-dashed" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="px-2 text-xs font-mono text-purple-500/60 bg-gray-900/5">
-                  ///
-                </span>
-              </div>
+            <div className="my-6 py-2 border-t border-b border-gray-200/10 text-center">
+              <span className="text-xs font-mono text-purple-400/60 tracking-widest">
+                ✦ ✦ ✦
+              </span>
             </div>
           ) : isHeader ? (
-            <h4 className="group mt-8 mb-4 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 relative">
-              <span className="relative z-10">{guideline}</span>
-              <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500/30 to-cyan-500/30 rounded-full group-hover:h-1 transition-all duration-300"></span>
+            <h4 className="mt-8 mb-4 text-lg font-bold text-white flex items-center gap-2">
+              <span>{guideline}</span>
             </h4>
           ) : isBulletPoint ? (
-            <li className="flex items-start ml-1 pl-4 text-gray-300 before:content-[''] before:block before:w-1.5 before:h-1.5 before:rounded-full before:bg-purple-400 before:mt-2 before:mr-2 before:flex-shrink-0">
-              {guideline.replace('•', '').trim()}
-            </li>
+            <div className="flex items-start mb-2">
+              <span className="text-purple-400 mr-2">•</span>
+              <span className={`text-gray-300 ${isImportant ? 'font-medium text-yellow-100' : ''}`}>
+                {guideline.replace(/^[•-]\s*/, '').trim()}
+              </span>
+            </div>
+          ) : isQuestion ? (
+            <p className="text-gray-300 mb-3 font-medium italic">
+              {guideline.trim()}
+            </p>
           ) : (
-            <p className="text-gray-300 mb-4 leading-relaxed">{guideline}</p>
+            <p className={`text-gray-300 mb-4 ${isImportant ? 'font-medium text-yellow-100' : ''}`}>
+              {guideline}
+            </p>
           )}
         </React.Fragment>
       );

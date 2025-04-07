@@ -1,6 +1,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import emailjs from '@emailjs/browser';
 import { TrashOnShowSubmissionPayload } from '../../types/formPayloads';
 
 export interface TrashOnShowProps {
@@ -33,32 +34,34 @@ export function TrashOnShowForm({ isSubmitting }: TrashOnShowProps) {
     };
 
     try {
-      const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbxSXaopMcdMcaBzjus8xe7GsNwGVC6iw0LicnIh1bWfCaOOzlb-JLx3RWSKhpDvPjN4/exec',
-        {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }
+      console.log('Submitting Trash on Show registration:', payload);
+
+      // Format the data for EmailJS
+      const emailJsParams = {
+        fullName: payload.fullName,
+        email: payload.email,
+        contactNumber: payload.contactNumber,
+        organization: payload.organization || "Not specified",
+        facebook: payload.facebook || "Not specified",
+        heroChoice: payload.performanceDetails.heroChoice,
+        message: payload.message || "No additional notes",
+        eventType: "Trash on Show",
+        date: new Date().toLocaleDateString()
+      };
+
+      // Send email using EmailJS
+      const response = await emailjs.send(
+        'service_2zxb7l7',  // Replace with your EmailJS service ID
+        'template_w8g2e54', // Replace with your EmailJS template ID
+        emailJsParams,
+        'DSTxPZLSo4N1DDPUr'   // Replace with your EmailJS public key
       );
 
-      // Check if the response is OK
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-      }
-
-      const result = await response.json();
-      
-      if (result.result === 'success') {
-        toast.success(result.message || 'Trash on Show registration submitted!');
+      if (response.status === 200) {
+        toast.success('Trash on Show registration submitted successfully!');
         (e.target as HTMLFormElement).reset();
       } else {
-        throw new Error(result.message || 'Submission failed');
+        throw new Error('Submission failed');
       }
     } catch (error: any) {
       console.error('Trash on Show submission error:', error);
@@ -90,7 +93,7 @@ export function TrashOnShowForm({ isSubmitting }: TrashOnShowProps) {
         {/* Organization */}
         <div className="space-y-2">
           <label htmlFor="organization" className="block text-sm font-medium text-gray-300">
-            School/Organization <span className="text-purple-400">*</span>
+            Department <span className="text-purple-400">*</span>
           </label>
           <input
             type="text"
@@ -100,7 +103,7 @@ export function TrashOnShowForm({ isSubmitting }: TrashOnShowProps) {
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
                       placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 
                       focus:border-transparent transition-all duration-200"
-            placeholder="SOT, SOB, SOE"
+            placeholder="Ex. COMP2A"
           />
         </div>
 

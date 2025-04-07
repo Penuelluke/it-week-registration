@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Loader2, Plus, X, ChevronDown } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import emailjs from '@emailjs/browser';
 import { GameSubmissionPayload } from '../../types/formPayloads';
 
 export interface GameFormProps {
@@ -37,20 +38,14 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     // Validate contact number
     const contactNumber = (e.target as HTMLFormElement).contactNumber.value;
     if (!/^(09|\+639)\d{9}$/.test(contactNumber)) {
       toast.error('Please enter a valid Philippine mobile number (e.g., 09123456789 or +639123456789)');
       return;
     }
-
-    // Validate team members
-    if (teamMembers.length < 1) {
-      toast.error('Please add at least one team member');
-      return;
-    }
-
+  
     // Prepare payload
     const payload: GameSubmissionPayload = {
       fullName: (e.target as HTMLFormElement).fullName.value,
@@ -73,47 +68,84 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
       message: (e.target as HTMLFormElement).message?.value || ""
     };
 
+    // More robust required fields check
+    const requiredFields: (keyof GameSubmissionPayload)[] = [
+      'fullName', 
+      'email', 
+      'teamName', 
+      'contactNumber', 
+      'eventType', 
+      'teamMembers'
+    ];
+
+    for (const field of requiredFields) {
+      // Special handling for teamMembers
+      if (field === 'teamMembers') {
+        if (!payload.teamMembers || payload.teamMembers.length === 0) {
+          toast.error('At least one team member is required');
+          return;
+        }
+      } else if (!payload[field]) {
+        toast.error(`Missing required field: ${field}`);
+        return;
+      }
+    }
+
     try {
       console.log('Submitting Game registration payload:', payload);
 
-      const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbxSXaopMcdMcaBzjus8xe7GsNwGVC6iw0LicnIh1bWfCaOOzlb-JLx3RWSKhpDvPjN4/exec',
-        {
-          method: 'POST',
-          mode: 'cors', // Explicitly set CORS mode
-          cache: 'no-cache',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }
+      // Format the data for EmailJS
+      const emailJsParams = {
+        fullName: payload.fullName,
+        email: payload.email,
+        teamName: payload.teamName,
+        contactNumber: payload.contactNumber,
+        gameType: payload.eventType,
+        organization: payload.organization || "Not specified",
+        facebook: payload.facebook || "Not specified",
+        message: payload.message || "No additional notes",
+        
+        // Format team members as a clean list without HTML tables
+        teamMembersList: payload.teamMembers.map((m, index) => 
+          `${index + 1}. ${m.name || "Player"} (${m.inGameName || "N/A"})${m.role ? ` - ${m.role}` : ''}`
+        ).join('<br>'),
+        
+        // Format substitutes as a clean list without HTML tables
+        substitutesList: payload.substitutes.length > 0
+          ? payload.substitutes.map((s, index) => 
+            `${index + 1}. ${s.name || "Player"} (${s.inGameName || "N/A"})${s.role ? ` - ${s.role}` : ''}`
+          ).join('<br>')
+          : 'None',
+          
+        // Simple date without time component
+        date: new Date().toDateString()
+      };
+
+      // Send email using EmailJS
+      const response = await emailjs.send(
+        'service_01v8335',  // Replace with your EmailJS service ID
+        'template_razo86e',  // Replace with your EmailJS template ID
+        emailJsParams,
+        '7PIo0J_kGpdWlPEiR'  // Replace with your EmailJS public key
       );
 
-      // Check if the response is OK
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-      }
+      if (response.status === 200) {
+        toast.success('Game registration submitted successfully!');
 
-      const result = await response.json();
-      
-      if (result.result === 'success') {
-        toast.success(result.message || 'Game registration submitted successfully!');
-        
         // Reset form
         (e.target as HTMLFormElement).reset();
         setTeamMembers([{ name: '', inGameName: '' }]);
         setSubstitutes([]);
       } else {
-        throw new Error(result.message || 'Submission failed');
+        throw new Error('Submission failed');
       }
     } catch (error: any) {
       console.error('Game submission error:', error);
       toast.error(error?.message || 'Failed to submit. Please try again.');
     }
   };
-
+    
+  
   const addTeamMember = () => {
     if (teamMembers.length < teamSize) {
       setTeamMembers([...teamMembers, { name: '', inGameName: '' }]);
@@ -121,7 +153,7 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
   };
 
   const addSubstitute = () => {
-    if (substitutes.length < 1) {
+    if (substitutes.length < 2) {
       setSubstitutes([...substitutes, { name: '', inGameName: '', isSubstitute: true }]);
     }
   };
@@ -177,7 +209,7 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
                       placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 
                       focus:border-transparent transition-all duration-200"
-            placeholder="John Doe"
+            placeholder="Juan Dela Cruz"
           />
         </div>
 
@@ -331,7 +363,7 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
               </div>
             </div>
 
-            {(gameType === 'mobile-legends' || gameType === 'call-of-duty') && (
+            {(gameType === 'mobile-legends') && (
               <div className="mt-4 space-y-2">
                 <label className="block text-sm font-medium text-gray-300">
                   Preferred Role
@@ -367,13 +399,13 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
       </div>
 
       {/* Substitutes Section */}
-      {(gameType === 'mobile-legends' || gameType === 'call-of-duty') && (
+      {(gameType === 'mobile-legends') && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-300">
-              Substitutes (Optional, max 1)
+              Substitutes (Optional, max 2)
             </h3>
-            {substitutes.length < 1 && (
+            {substitutes.length < 2 && (
               <button
                 type="button"
                 onClick={addSubstitute}
