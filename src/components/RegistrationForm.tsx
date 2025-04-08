@@ -252,18 +252,30 @@ export function RegistrationForm() {
           {/* Animated title effect */}
           <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-purple-500/10 filter blur-xl animate-pulse"></div>
           <div className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-cyan-500/10 filter blur-xl animate-pulse delay-300"></div>
-          
-          <h1 className="text-4xl font-bold text-white">
+
+          {/* Title */}
+          <h1 className="text-4xl font-bold text-white mb-2">
             <span className="glitch-text" data-text="IT WEEK 2025">
               IT WEEK 2025
             </span>
           </h1>
+
+          {/* Subtitle */}
           <p className="text-lg text-gray-400 mb-4">
             Register for the most exciting tech events of the year!
           </p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900/50 border border-purple-500/30 text-purple-300 rounded-full text-sm backdrop-blur-sm">
+
+          {/* Deadline Tag */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 bg-gray-900/50 border border-purple-500/30 text-purple-300 rounded-full text-sm backdrop-blur-sm">
             <Clock size={18} />
-            <span>Registration Deadline: April 11, 2025</span>
+            <span>Registration Deadline: April 11, 2025 @ 11:59 PM</span>
+          </div>
+
+          {/* Read Guidelines Notice */}
+          <div className="mx-auto max-w-xl p-4 mb-4 bg-yellow-500/10 border border-yellow-500 text-yellow-300 rounded-lg text-sm font-medium backdrop-blur-sm">
+            ⚠️ <span className="font-semibold uppercase tracking-wide">Read EVENT Guidelines!</span>
+            &nbsp;Make sure to check all event rules and requirements before registering. Ignorance of the rules will not be accepted as
+            an excuse during disputes or violations.
           </div>
         </div>
 
