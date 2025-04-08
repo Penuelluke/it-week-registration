@@ -247,21 +247,19 @@ export function RegistrationForm() {
       <div className="fixed bottom-0 left-0 w-32 h-32 border-b-2 border-l-2 border-cyan-500/50 z-0"></div>
       <div className="fixed bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-purple-500/50 z-0"></div>
 
-      <div className="relative z-10 max-w-6xl mx-auto p-4 sm:p-6">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-6">
         <div className="text-center mb-10 sm:mb-14 relative">
-          {/* Animated title effect */}
+          {/* Animated background pulses */}
           <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-purple-500/10 filter blur-xl animate-pulse"></div>
           <div className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-cyan-500/10 filter blur-xl animate-pulse delay-300"></div>
 
           {/* Title */}
-          <h1 className="text-4xl font-bold text-white mb-2">
-            <span className="glitch-text" data-text="IT WEEK 2025">
-              IT WEEK 2025
-            </span>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+            <span className="glitch-text" data-text="IT WEEK 2025">IT WEEK 2025</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg text-gray-400 mb-4">
+          <p className="text-base sm:text-lg text-gray-400 mb-4">
             Register for the most exciting tech events of the year!
           </p>
 
@@ -271,22 +269,24 @@ export function RegistrationForm() {
             <span>Registration Deadline: April 11, 2025 @ 11:59 PM</span>
           </div>
 
-          {/* Read Guidelines Notice */}
-          <div className="mx-auto max-w-xl p-4 mb-4 bg-yellow-500/10 border border-yellow-500 text-yellow-300 rounded-lg text-sm font-medium backdrop-blur-sm">
+          {/* Guidelines */}
+          <div className="mx-auto max-w-lg p-4 mb-4 bg-yellow-500/10 border border-yellow-500 text-yellow-300 rounded-lg text-sm font-medium backdrop-blur-sm">
             ⚠️ <span className="font-semibold uppercase tracking-wide">Read EVENT Guidelines!</span>
             &nbsp;Make sure to check all event rules and requirements before registering. Ignorance of the rules will not be accepted as
             an excuse during disputes or violations.
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 relative">
-          {/* Grid pattern overlay */}
+        {/* Grid layout for Events and Form */}
+        <div className="grid gap-8 lg:grid-cols-2 relative">
+          {/* Grid background overlay */}
           <div className="absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-10"></div>
           </div>
 
+          {/* Events List */}
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-cyan-300 px-2">
+            <h2 className="text-xl sm:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-cyan-300 px-2">
               Available Events
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -301,25 +301,29 @@ export function RegistrationForm() {
             </div>
           </div>
 
+          {/* Registration Form */}
           <div
             ref={formRef}
-            className="bg-gray-900/70 rounded-xl p-6 sm:p-8 shadow-xl border border-purple-600/20 backdrop-blur-sm relative overflow-hidden"
+            className="bg-gray-900/70 rounded-xl p-4 sm:p-6 md:p-8 shadow-xl border border-purple-600/20 backdrop-blur-sm relative overflow-hidden"
           >
-            {/* Form background effects */}
+            {/* Blurred decorative elements */}
             <div className="absolute inset-0 -z-10">
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/10 rounded-full filter blur-3xl"></div>
               <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-cyan-500/10 rounded-full filter blur-3xl"></div>
             </div>
 
+            {/* Header */}
             <div className="flex items-center gap-3 mb-6">
               <div className={`p-2 rounded-lg ${
-                selectedEventData ? 'bg-gradient-to-br from-purple-600 to-cyan-600 text-white shadow-lg' : 'bg-gray-800/50 text-gray-500 border border-gray-700/50'
+                selectedEventData
+                  ? 'bg-gradient-to-br from-purple-600 to-cyan-600 text-white shadow-lg'
+                  : 'bg-gray-800/50 text-gray-500 border border-gray-700/50'
               }`}>
-                {selectedEventData?.icon && iconMap[selectedEventData.icon as IconName] 
+                {selectedEventData?.icon && iconMap[selectedEventData.icon as IconName]
                   ? React.createElement(iconMap[selectedEventData.icon as IconName], { size: 24 })
                   : <ClipboardList size={24} />}
               </div>
-              <h2 className="text-2xl font-semibold text-white">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white">
                 {selectedEventData ? (
                   <>Register for <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">{selectedEventData.name}</span></>
                 ) : (
