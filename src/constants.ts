@@ -163,6 +163,7 @@ export const EVENTS: Event[] = [
       ' All team members, including coaches, must be listed on the official roster submitted by their respective School Deans.',
       ' Players not on the roster will not be allowed to play.',
       ' A player’s clothing must be appropriate and in the colors of their respective team/school.',
+      ' 📶 Participants must use their own mobile data or internet connection during the match.',
       '',
       '⚔️ Match Rules',
       ' Teams must be ready 15 minutes before the scheduled match. A 15-minute delay results in a loss of the first game.',
