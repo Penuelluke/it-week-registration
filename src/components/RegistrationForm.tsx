@@ -263,10 +263,12 @@ export function RegistrationForm() {
             Register for the most exciting tech events of the year!
           </p>
 
-          {/* Deadline Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 bg-gray-900/50 border border-purple-500/30 text-purple-300 rounded-full text-sm backdrop-blur-sm">
-            <Clock size={18} />
-            <span>Registration Deadline: April 11, 2025 @ 11:59 PM</span>
+          {/* Deadline Tag (Responsive) */}
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-2 mb-4 bg-gray-900/50 border border-purple-500/30 text-purple-300 rounded-full text-xs sm:text-sm backdrop-blur-sm w-full sm:w-auto text-center">
+            <Clock size={16} className="shrink-0" />
+            <span className="whitespace-normal">
+              Registration Deadline: April 11, 2025 @ 11:59 PM
+            </span>
           </div>
 
           {/* Guidelines */}
