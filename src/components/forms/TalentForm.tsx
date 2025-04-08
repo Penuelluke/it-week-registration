@@ -27,10 +27,10 @@ export function TalentForm({ isSubmitting }: TalentFormProps) {
   
     try {
       const result = await emailjs.sendForm(
-        'service_qrengn2',      // 👈 Replace this
-        'template_hnae96k',     // 👈 Replace this
+        'service_rhi4xhw',      // 👈 Replace this
+        'template_r8ahkr2',     // 👈 Replace this
         form,
-        '1-2OkeMhjmphmTJo6'       // 👈 Replace this
+        'sxDMBW8RVh4w6jL6V'       // 👈 Replace this
       );
   
       if (result.status === 200) {

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Loader2, Plus, X, ChevronDown } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -123,10 +124,10 @@ export function GameForm({ isSubmitting, teamSize, gameType }: GameFormProps) {
 
       // Send email using EmailJS
       const response = await emailjs.send(
-        'service_01v8335',  // Replace with your EmailJS service ID
-        'template_razo86e',  // Replace with your EmailJS template ID
+        'service_svcichx',  // Replace with your EmailJS service ID
+        'template_h8rr77v',  // Replace with your EmailJS template ID
         emailJsParams,
-        '7PIo0J_kGpdWlPEiR'  // Replace with your EmailJS public key
+        'ebMs4Cvygl5rNu914'  // Replace with your EmailJS public key
       );
 
       if (response.status === 200) {
