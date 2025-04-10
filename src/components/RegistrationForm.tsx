@@ -338,6 +338,20 @@ export function RegistrationForm() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 py-6 bg-gray-900/50 border-t border-gray-800/50 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0 text-center sm:text-left">
+            <div className="text-sm text-gray-400">
+              © 2025 School of Technology. All rights reserved.
+            </div>
+            <div className="text-xs text-gray-500">
+              Developed by <span className="text-cyan-400">JFD</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
