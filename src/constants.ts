@@ -114,7 +114,7 @@ export const EVENTS: Event[] = [
       ' 📶 Participants must use their own mobile data or internet connection during the match.',
       '',
       '🛠️ Game Settings',
-      ' Perspective: FPP only',
+      ' Perspective: TPP Squad',
       ' Weapons: All allowed',
       ' Operator Skills / Class: Disabled',
       ' Vehicles: Allowed',
