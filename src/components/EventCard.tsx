@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Event } from '../types';
-import { Mic2, Image, Gamepad2, Sword, ChevronDown, X, LucideIcon, Zap } from 'lucide-react';
+import { Mic2, Image, Gamepad2, Sword, ChevronDown, X, LucideIcon, Zap, Lock } from 'lucide-react';
 import clsx from 'clsx';
 import { Dialog, Transition } from '@headlessui/react';
 
@@ -18,16 +18,19 @@ interface EventCardProps {
   isSelected: boolean;
   onClick: () => void;
   scrollToForm?: () => void;
+  disabled?: boolean;
 }
 
-export function EventCard({ event, isSelected, onClick, scrollToForm }: EventCardProps) {
+export function EventCard({ event, isSelected, onClick, scrollToForm, disabled = false }: EventCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const Icon = event.icon in iconMap ? iconMap[event.icon as IconName] : null;
 
   const handleClick = () => {
-    onClick();
-    scrollToForm?.();
+    if (!disabled) {
+      onClick();
+      scrollToForm?.();
+    }
   };
 
   const renderGuidelines = () => {
@@ -77,23 +80,37 @@ export function EventCard({ event, isSelected, onClick, scrollToForm }: EventCar
     <>
       <div
         onClick={handleClick}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => !disabled && setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={clsx(
-          'cursor-pointer rounded-xl p-6 transition-all duration-300 relative overflow-hidden',
-          'border hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2',
-          isSelected
+          'rounded-xl p-6 transition-all duration-300 relative overflow-hidden',
+          'border focus:outline-none focus:ring-2 focus:ring-offset-2',
+          disabled
+            ? 'border-gray-800/30 bg-gray-900/10 cursor-not-allowed opacity-70'
+            : 'cursor-pointer hover:shadow-lg',
+          isSelected && !disabled
             ? 'border-transparent bg-gradient-to-br from-purple-900/30 to-gray-900/10 shadow-lg shadow-purple-500/20 backdrop-blur-sm'
-            : 'border-gray-800/50 bg-gray-900/5 hover:border-purple-400/30 backdrop-blur-sm',
-          isHovered && !isSelected && 'shadow-purple-500/10'
+            : !disabled && 'border-gray-800/50 bg-gray-900/5 hover:border-purple-400/30 backdrop-blur-sm',
+          isHovered && !isSelected && !disabled && 'shadow-purple-500/10'
         )}
-        tabIndex={0}
+        tabIndex={disabled ? -1 : 0}
         role="button"
-        aria-label={`Select ${event.name} event`}
+        aria-label={disabled ? `Registration closed for ${event.name}` : `Select ${event.name} event`}
         aria-pressed={isSelected}
+        aria-disabled={disabled}
       >
+        {/* Disabled overlay */}
+        {disabled && (
+          <div className="absolute inset-0 bg-gray-900/70 flex items-center justify-center z-20">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Lock size={16} />
+              <span className="text-sm">Registration Closed</span>
+            </div>
+          </div>
+        )}
+
         {/* Animated background elements */}
-        {isSelected && (
+        {isSelected && !disabled && (
           <>
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/10 rounded-full filter blur-3xl"></div>
@@ -107,30 +124,43 @@ export function EventCard({ event, isSelected, onClick, scrollToForm }: EventCar
           <div
             className={clsx(
               'rounded-lg p-3 flex-shrink-0 transition-all duration-300 relative',
-              isSelected 
-                ? 'bg-gradient-to-br from-purple-600 to-cyan-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-gray-800/50 text-purple-400 hover:bg-gray-800/70 border border-gray-700/50 hover:border-purple-500/30'
+              disabled
+                ? 'bg-gray-800/20 text-gray-500 border border-gray-700/30'
+                : isSelected 
+                  ? 'bg-gradient-to-br from-purple-600 to-cyan-600 text-white shadow-lg shadow-purple-500/30'
+                  : 'bg-gray-800/50 text-purple-400 hover:bg-gray-800/70 border border-gray-700/50 hover:border-purple-500/30'
             )}
             aria-hidden="true"
           >
             {Icon && <Icon size={24} />}
-            {isSelected && (
+            {isSelected && !disabled && (
               <div className="absolute -inset-1 rounded-lg bg-purple-500/20 animate-pulse"></div>
             )}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-gray-100">{event.name}</h3>
-              {isSelected && (
+              <h3 className={clsx(
+                'font-semibold',
+                disabled ? 'text-gray-500' : 'text-gray-100'
+              )}>
+                {event.name}
+              </h3>
+              {isSelected && !disabled && (
                 <span className="flex items-center text-xs font-mono px-2 py-1 rounded bg-purple-900/50 text-purple-300 border border-purple-700/50">
                   <Zap size={12} className="mr-1" /> SELECTED
                 </span>
               )}
             </div>
-            <p className="mt-1 text-sm text-gray-400 line-clamp-2">{event.description}</p>
+            <p className={clsx(
+              'mt-1 text-sm line-clamp-2',
+              disabled ? 'text-gray-500/70' : 'text-gray-400'
+            )}>
+              {event.description}
+            </p>
 
             <button
               type="button"
+              disabled={disabled}
               onClick={(e) => {
                 e.stopPropagation();
                 setIsModalOpen(true);
@@ -138,18 +168,22 @@ export function EventCard({ event, isSelected, onClick, scrollToForm }: EventCar
               className={clsx(
                 'mt-4 flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-sm font-medium transition-all',
                 'focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/50',
-                isSelected
-                  ? 'bg-gray-800/70 text-gray-200 border border-gray-700/50 hover:bg-gray-800 hover:border-purple-500/30 hover:shadow-purple-500/10'
-                  : 'bg-gray-800/50 text-gray-300 border border-gray-700/30 hover:bg-gray-800/70 hover:border-purple-500/20'
+                disabled
+                  ? 'bg-gray-800/20 text-gray-500/50 border border-gray-700/30 cursor-not-allowed'
+                  : isSelected
+                    ? 'bg-gray-800/70 text-gray-200 border border-gray-700/50 hover:bg-gray-800 hover:border-purple-500/30 hover:shadow-purple-500/10'
+                    : 'bg-gray-800/50 text-gray-300 border border-gray-700/30 hover:bg-gray-800/70 hover:border-purple-500/20'
               )}
               aria-label={`View guidelines for ${event.name}`}
+              aria-disabled={disabled}
             >
               <span>View Event Guidelines</span>
               <ChevronDown 
                 size={16} 
                 className={clsx(
                   'transition-transform duration-200',
-                  isModalOpen && 'transform rotate-180'
+                  isModalOpen && 'transform rotate-180',
+                  disabled && 'text-gray-500/50'
                 )} 
                 aria-hidden="true" 
               />
@@ -209,6 +243,12 @@ export function EventCard({ event, isSelected, onClick, scrollToForm }: EventCar
                     </button>
                   </div>
                   <p className="mt-1 text-purple-200/80">{event.description}</p>
+                  {disabled && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-red-300">
+                      <Lock size={14} />
+                      <span>Registration for this event is now closed</span>
+                    </div>
+                  )}
                 </div>
 
                 <div 
