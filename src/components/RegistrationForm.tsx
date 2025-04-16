@@ -13,7 +13,7 @@ type IconName = 'Mic2' | 'Image' | 'Gamepad2' | 'Sword' | 'ClipboardList';
 
 // Deadline check utility function
 const checkRegistrationDeadline = () => {
-  const deadline = new Date(2025, 3, 16, 23, 59, 0); // April is month 3 (0-indexed)
+  const deadline = new Date(2025, 3, 17, 23, 59, 0); // April is month 3 (0-indexed)
   const now = new Date();
   return now > deadline;
 };
@@ -209,7 +209,7 @@ export function RegistrationForm() {
             Registration Closed
           </h3>
           <p className="mt-2 text-gray-400 max-w-md mx-auto">
-            The registration deadline was April 16, 2025 at 11:59 PM.
+            The registration deadline was April 17, 2025 at 11:59 PM.
           </p>
           <p className="mt-2 text-gray-500 text-sm">
             Late submissions will not be accepted.
@@ -307,7 +307,7 @@ export function RegistrationForm() {
           } border rounded-full text-xs sm:text-sm backdrop-blur-sm w-full sm:w-auto text-center`}>
             <Clock size={16} className="shrink-0" />
             <span className="whitespace-normal">
-              {isDeadlinePassed ? 'Registration Closed' : 'Registration Deadline: April 16, 2025 @ 11:59 PM'}
+              {isDeadlinePassed ? 'Registration Closed' : 'Registration Deadline: April 17, 2025 @ 11:59 PM'}
             </span>
           </div>
 
